@@ -76,3 +76,35 @@ this app isn't about moving on fast. it's about moving on *right*.
 ---
 
 ## project structure
+
+tillness/
+├── Screens/
+│   ├── HomeView.swift
+│   ├── ThemView.swift
+│   ├── DearMeView.swift
+│   └── SettingsView.swift
+├── Models/
+│   ├── DearMeEntry.swift
+│   └── GratitudeLog.swift
+└── ContentView.swift
+
+
+---
+
+## personal note
+
+i'm not a professional developer. i'm just someone who wanted something that didn't exist yet — so i built it. slowly. with a lot of googling, a lot of errors, and a lot of `flutter run` before i switched to swiftui.
+
+this is version 1. it's rough around the edges. and that's okay.
+
+*stillness is a solo journey. this repo is proof i started.*
+
+---
+
+## author
+
+**tenchii** — [@tenchiift](https://github.com/tenchiift)
+
+---
+
+*built with intention. not perfection.* 🌿
