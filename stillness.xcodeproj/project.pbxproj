@@ -10,9 +10,22 @@
 		C43ED2F92F8A2FCA0075E1B0 /* stillness.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = stillness.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C43ED3582F8B22920075E1B0 /* Exceptions for "stillness" folder in "stillness" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C43ED2F82F8A2FCA0075E1B0 /* stillness */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C43ED2FB2F8A2FCA0075E1B0 /* stillness */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C43ED3582F8B22920075E1B0 /* Exceptions for "stillness" folder in "stillness" target */,
+			);
 			path = stillness;
 			sourceTree = "<group>";
 		};
@@ -256,6 +269,7 @@
 				DEVELOPMENT_TEAM = GLVASFU4D2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = stillness/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -288,6 +302,7 @@
 				DEVELOPMENT_TEAM = GLVASFU4D2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = stillness/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
