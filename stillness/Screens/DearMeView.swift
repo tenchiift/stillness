@@ -22,7 +22,7 @@ struct DearMeView: View {
                 HStack {
                     Text("dear me")
                         .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.black)
+                        .foregroundColor(.white)
                     Spacer()
                     Button(action: { showNewEntry = true }) {
                         Image(systemName: "plus")
@@ -297,4 +297,8 @@ struct NewDearMeView: View {
             UserDefaults.standard.set(encoded, forKey: "dearMeEntries")
         }
     }
+}
+
+#Preview {
+    ContentView()
 }

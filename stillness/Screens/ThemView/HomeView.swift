@@ -9,6 +9,8 @@ struct HomeView: View {
     @State private var isPlaying = false
     @State private var timer: Timer? = nil
     @State private var songProgress: Double = 0.0
+    @State private var zikrFullscreen = false
+    
     @AppStorage("zikrCount") private var zikrCount = 0
     @AppStorage("zikrTarget") private var zikrTarget = 33
     
@@ -81,22 +83,46 @@ struct HomeView: View {
                         
                         Spacer()
                         
-                        // Counter display + tap
+                        // Counter — tap = count, long press = fullscreen
                         Button(action: {
                             zikrCount += 1
                             if zikrCount >= zikrTarget {
                                 zikrCount = 0
                             }
                         }) {
-                            VStack(spacing: 0) {
+                            VStack(spacing: 5) {
                                 Text("\(zikrCount)")
-                                    .font(.system(size: 45, weight: .bold))
+                                    .font(.system(size: zikrFullscreen ? 80 : 45, weight: .bold))
                                     .foregroundColor(.black)
+                                    .padding(.top, 2)
+                                    .offset(y: zikrFullscreen ? CGFloat(0) : CGFloat(15))
+                                    .contentTransition(.numericText())
+
+                                
+                                Text("click me !")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.black)
+                                    .opacity(zikrFullscreen ? 0 : 1)
+                                    .offset(y: zikrFullscreen ? CGFloat(0) : CGFloat(5))
+                                    .animation(.spring(response: 0.5, dampingFraction: 1), value: zikrFullscreen)
+                                
                                 Text("/ \(zikrTarget)")
-                                    .font(.system(size: 15, weight: .bold))
+                                    .font(.system(size: zikrFullscreen ? 20 : 15, weight: .bold))
                                     .foregroundColor(.black.opacity(0.4))
+                                    .padding(.top, 4)
+                                    .offset(y: zikrFullscreen ? CGFloat(-25) : CGFloat(3))
                             }
+                            .offset(y: zikrFullscreen ? 25 : 0)
+                            .animation(.spring(response: 0.5, dampingFraction: 0.8), value: zikrFullscreen)
                         }
+                        .simultaneousGesture(
+                            LongPressGesture(minimumDuration: 0.5)
+                                .onEnded { _ in
+                                    withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
+                                        zikrFullscreen = true
+                                    }
+                                }
+                        )
                         
                         Spacer()
                         
@@ -118,10 +144,24 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 24)
                 .padding(.top, 80)
-                .padding(.bottom, 30)
+                .padding(.bottom, zikrFullscreen ? 30 : 30)
                 .background(Color.white)
                 .cornerRadius(40)
-                
+                .onTapGesture {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
+                        zikrFullscreen = true
+                    }
+                }
+                .gesture(
+                    DragGesture()
+                        .onEnded { value in
+                            if value.translation.height < -50 && zikrFullscreen {
+                                withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                                    zikrFullscreen = false
+                                }
+                            }
+                        }
+                )
                 // Card 2 — Progress
                 VStack(alignment: .leading, spacing: 14) {
                     Text("so far")
@@ -150,7 +190,6 @@ struct HomeView: View {
                 VStack(spacing: 16) {
                     Spacer().frame(height: 8)
                     
-                    // Album art + progress ring
                     ZStack {
                         Circle()
                             .stroke(Color.gray.opacity(0.15), lineWidth: 4)

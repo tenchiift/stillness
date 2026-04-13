@@ -100,7 +100,9 @@ struct ThemView: View {
                         
                         ThemCard(title: "to me")
                         ThemCard(title: "vibing")
-                        ThemCard(title: "stop")
+                        NavigationLink(destination: StopView()) {
+                            ThemCard(title: "stop")
+                        }
                     }
                     .padding(.horizontal, 16)
                     
