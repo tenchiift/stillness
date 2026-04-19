@@ -2,6 +2,9 @@ import SwiftUI
 
 struct ThemView: View {
     
+    @State private var showNewEntry = false
+    @EnvironmentObject var dearMeStore: DearMeStore
+    @EnvironmentObject var appState: AppState
     @AppStorage("zikrCount") private var zikrCount = 0
     @AppStorage("zikrTarget") private var zikrTarget = 33
     
@@ -38,6 +41,7 @@ struct ThemView: View {
                         
                         // Zikir Counter
                         HStack {
+                            // Reset
                             Button(action: { zikrCount = 0 }) {
                                 Image(systemName: "arrow.counterclockwise")
                                     .font(.system(size: 14))
@@ -49,24 +53,50 @@ struct ThemView: View {
                             
                             Spacer()
                             
+                            // Counter — tap = count, long press = fullscreen
                             Button(action: {
                                 zikrCount += 1
                                 if zikrCount >= zikrTarget {
                                     zikrCount = 0
                                 }
                             }) {
-                                VStack(spacing: 0) {
+                                VStack(spacing: 5) {
                                     Text("\(zikrCount)")
-                                        .font(.system(size: 45, weight: .bold))
+                                        .font(.system(size: appState.zikrFullscreen ? 80 : 45, weight: .bold))
                                         .foregroundColor(.black)
+                                        .padding(.top, 2)
+                                        .offset(y: appState.zikrFullscreen ? CGFloat(0) : CGFloat(15))
+                                        .contentTransition(.numericText())
+                                    
+                                    
+                                    Text("click me !")
+                                        .font(.system(size: 11))
+                                        .foregroundColor(.black)
+                                        .opacity(appState.zikrFullscreen ? 0 : 1)
+                                        .offset(y: appState.zikrFullscreen ? CGFloat(0) : CGFloat(5))
+                                        .animation(.spring(response: 0.5, dampingFraction: 1), value: appState.zikrFullscreen)
+                                    
                                     Text("/ \(zikrTarget)")
-                                        .font(.system(size: 15, weight: .bold))
+                                        .font(.system(size: appState.zikrFullscreen ? 20 : 15, weight: .bold))
                                         .foregroundColor(.black.opacity(0.4))
+                                        .padding(.top, 4)
+                                        .offset(y: appState.zikrFullscreen ? CGFloat(-25) : CGFloat(3))
                                 }
+                                .offset(y: appState.zikrFullscreen ? 25 : 0)
+                                .animation(.spring(response: 0.5, dampingFraction: 0.8), value: appState.zikrFullscreen)
                             }
+                            .simultaneousGesture(
+                                LongPressGesture(minimumDuration: 0.5)
+                                    .onEnded { _ in
+                                        withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
+                                            appState.zikrFullscreen = true
+                                        }
+                                    }
+                            )
                             
                             Spacer()
                             
+                            // Target selector
                             Menu {
                                 Button("33") { zikrTarget = 33; zikrCount = 0 }
                                 Button("99") { zikrTarget = 99; zikrCount = 0 }
@@ -84,31 +114,65 @@ struct ThemView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 24)
                     .padding(.top, 80)
-                    .padding(.bottom, 30)
+                    .padding(.bottom, appState.zikrFullscreen ? 30 : 30)
                     .background(Color.white)
                     .cornerRadius(40)
-                    
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
+                            appState.zikrFullscreen = true
+                        }
+                    }
+                    .gesture(
+                        DragGesture()
+                            .onEnded { value in
+                                if value.translation.height < -50 && appState.zikrFullscreen {
+                                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                                        appState.zikrFullscreen = false
+                                    }
+                                }
+                            }
+                    )
                     // 4 Cards Grid
                     LazyVGrid(columns: [
                         GridItem(.flexible(), spacing: 12),
                         GridItem(.flexible(), spacing: 12)
                     ], spacing: 12) {
-                        NavigationLink(destination: DearMeView()) {
+                        
+                        Button(action: { showNewEntry = true }) {
                             ThemCard(title: "dear me")
                         }
                         .buttonStyle(PlainButtonStyle())
                         
-                        ThemCard(title: "to me")
+                        NavigationLink(destination: ToMeView()) {
+                            ThemCard(title: "to me")
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        
                         ThemCard(title: "vibing")
+                        
                         NavigationLink(destination: StopView()) {
                             ThemCard(title: "stop")
                         }
+                        .buttonStyle(PlainButtonStyle())
                     }
                     .padding(.horizontal, 16)
                     
                     Spacer()
                 }
                 .ignoresSafeArea(edges: .top)
+            }
+            .onAppear {
+                withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                    appState.zikrFullscreen = false
+                }
+            }
+            .onDisappear {
+                withAnimation(.none) {
+                    appState.zikrFullscreen = false
+                }
+            }
+            .sheet(isPresented: $showNewEntry) {
+                NewDearMeView(entries: $dearMeStore.entries, onSave: { dearMeStore.save() })
             }
         }
     }
@@ -132,4 +196,6 @@ struct ThemCard: View {
 
 #Preview {
     ThemView()
+        .environmentObject(AppState())
+        .environmentObject(DearMeStore())
 }

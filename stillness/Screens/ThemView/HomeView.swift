@@ -9,7 +9,7 @@ struct HomeView: View {
     @State private var isPlaying = false
     @State private var timer: Timer? = nil
     @State private var songProgress: Double = 0.0
-    @State private var zikrFullscreen = false
+    @EnvironmentObject var appState: AppState
     
     @AppStorage("zikrCount") private var zikrCount = 0
     @AppStorage("zikrTarget") private var zikrTarget = 33
@@ -68,7 +68,7 @@ struct HomeView: View {
                         .foregroundColor(.black.opacity(0.5))
                     
                     Spacer().frame(height: 24)
-
+                    
                     // Zikir Counter
                     HStack {
                         // Reset
@@ -92,34 +92,34 @@ struct HomeView: View {
                         }) {
                             VStack(spacing: 5) {
                                 Text("\(zikrCount)")
-                                    .font(.system(size: zikrFullscreen ? 80 : 45, weight: .bold))
+                                    .font(.system(size: appState.zikrFullscreen ? 80 : 45, weight: .bold))
                                     .foregroundColor(.black)
                                     .padding(.top, 2)
-                                    .offset(y: zikrFullscreen ? CGFloat(0) : CGFloat(15))
+                                    .offset(y: appState.zikrFullscreen ? CGFloat(0) : CGFloat(15))
                                     .contentTransition(.numericText())
-
+                                
                                 
                                 Text("click me !")
                                     .font(.system(size: 11))
                                     .foregroundColor(.black)
-                                    .opacity(zikrFullscreen ? 0 : 1)
-                                    .offset(y: zikrFullscreen ? CGFloat(0) : CGFloat(5))
-                                    .animation(.spring(response: 0.5, dampingFraction: 1), value: zikrFullscreen)
+                                    .opacity(appState.zikrFullscreen ? 0 : 1)
+                                    .offset(y: appState.zikrFullscreen ? CGFloat(0) : CGFloat(5))
+                                    .animation(.spring(response: 0.5, dampingFraction: 1), value: appState.zikrFullscreen)
                                 
                                 Text("/ \(zikrTarget)")
-                                    .font(.system(size: zikrFullscreen ? 20 : 15, weight: .bold))
+                                    .font(.system(size: appState.zikrFullscreen ? 20 : 15, weight: .bold))
                                     .foregroundColor(.black.opacity(0.4))
                                     .padding(.top, 4)
-                                    .offset(y: zikrFullscreen ? CGFloat(-25) : CGFloat(3))
+                                    .offset(y: appState.zikrFullscreen ? CGFloat(-25) : CGFloat(3))
                             }
-                            .offset(y: zikrFullscreen ? 25 : 0)
-                            .animation(.spring(response: 0.5, dampingFraction: 0.8), value: zikrFullscreen)
+                            .offset(y: appState.zikrFullscreen ? 25 : 0)
+                            .animation(.spring(response: 0.5, dampingFraction: 0.8), value: appState.zikrFullscreen)
                         }
                         .simultaneousGesture(
                             LongPressGesture(minimumDuration: 0.5)
                                 .onEnded { _ in
                                     withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
-                                        zikrFullscreen = true
+                                        appState.zikrFullscreen = true
                                     }
                                 }
                         )
@@ -144,20 +144,20 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 24)
                 .padding(.top, 80)
-                .padding(.bottom, zikrFullscreen ? 30 : 30)
+                .padding(.bottom, appState.zikrFullscreen ? 30 : 30)
                 .background(Color.white)
                 .cornerRadius(40)
                 .onTapGesture {
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
-                        zikrFullscreen = true
+                        appState.zikrFullscreen = true
                     }
                 }
                 .gesture(
                     DragGesture()
                         .onEnded { value in
-                            if value.translation.height < -50 && zikrFullscreen {
+                            if value.translation.height < -50 && appState.zikrFullscreen {
                                 withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                                    zikrFullscreen = false
+                                    appState.zikrFullscreen = false
                                 }
                             }
                         }
@@ -292,10 +292,13 @@ struct HomeView: View {
         .onDisappear {
             timer?.invalidate()
             timer = nil
+
+            
         }
     }
 }
 
 #Preview {
     HomeView()
+        .environmentObject(AppState())
 }

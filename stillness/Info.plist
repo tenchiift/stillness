@@ -17,5 +17,12 @@
 	</array>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Stillness needs access to display your currently playing music.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>quran</string>
+		<string>com.quran.ios
+</string>
+		<string>qurancom</string>
+	</array>
 </dict>
 </plist>

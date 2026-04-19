@@ -68,7 +68,7 @@ struct DearMeView: View {
         }
         .navigationBarHidden(true)
         .sheet(isPresented: $showNewEntry) {
-            NewDearMeView(entries: $entries)
+            NewDearMeView(entries: $entries, onSave: {})
         }
         .onAppear {
             loadEntries()
@@ -192,6 +192,7 @@ struct NewDearMeView: View {
     @State private var songTitle = ""
     @State private var songArtist = ""
     @State private var showSongPicker = false
+    let onSave: () -> Void
     
     var body: some View {
         NavigationStack {
@@ -296,6 +297,7 @@ struct NewDearMeView: View {
         if let encoded = try? JSONEncoder().encode(entries) {
             UserDefaults.standard.set(encoded, forKey: "dearMeEntries")
         }
+        onSave()
     }
 }
 
